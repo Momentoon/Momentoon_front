@@ -1,3 +1,4 @@
+import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   Image,
@@ -63,6 +64,7 @@ export default function HomeTab({ navigation }: RootTabScreenProps<"TabOne">) {
   return (
     <View style={styles.container}>
       {/*최근 게시글, 팔로잉 게시글 선택*/}
+      <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
       <View
         style={{
           flexDirection: "row",

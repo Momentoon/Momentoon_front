@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   NavigationContainer,
@@ -18,11 +18,12 @@ import {
   Image,
   StyleSheet,
   Text,
+  TouchableOpacity,
 } from "react-native";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
-import ModalScreen from "../screens/ModalScreen";
+import CreateModal from "../screens/CreateModal";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import HomeTab from "../screens/HomeTab";
 import SearchTab from "../screens/SearchTab";
@@ -71,8 +72,26 @@ function RootNavigator() {
         component={NotFoundScreen}
         options={{ title: "Oops!" }}
       />
-      <Stack.Group screenOptions={{ presentation: "modal" }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
+      <Stack.Group screenOptions={{ presentation: "fullScreenModal" }}>
+        <Stack.Screen
+          name="Create"
+          component={CreateModal}
+          options={({ navigation }: RootTabScreenProps<"Create">) => ({
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.pop();
+                }}
+              >
+                <Ionicons name="chevron-back" size={30} color="white" />
+              </TouchableOpacity>
+            ),
+            statusBarColor: "black",
+            headerStyle: {
+              backgroundColor: "black",
+            },
+          })}
+        />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -122,7 +141,7 @@ function BottomTabNavigator() {
           },
           headerRight: () => (
             <Pressable
-              onPress={() => navigation.navigate("Modal")}
+              onPress={() => navigation.navigate("Create")}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
                 flexDirection: "row",
