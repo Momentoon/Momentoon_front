@@ -51,5 +51,10 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Momentoon app requires photo library access.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Momentoon app requires camera access to take photo.</string>
 </dict>
 </plist>
