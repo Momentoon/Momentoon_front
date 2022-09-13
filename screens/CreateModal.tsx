@@ -69,18 +69,20 @@ export default function CreateModal() {
           }}
         >
           {[...Array(currentFrameNum)].map((a) => (
-            <View
-              style={{
-                width: 160,
-                height: 160,
-                marginBottom: 17,
-                borderRadius: 10,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <FontAwesome name="camera" size={50} color="black" />
-            </View>
+            <TouchableOpacity>
+              <View
+                style={{
+                  width: 160,
+                  height: 160,
+                  marginBottom: 17,
+                  borderRadius: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <FontAwesome name="camera" size={50} color="black" />
+              </View>
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
