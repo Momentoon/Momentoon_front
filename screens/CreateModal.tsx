@@ -5,11 +5,13 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  Image,
 } from "react-native";
 import { useState, useEffect } from "react";
 
 import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
+import ImagePicker from "react-native-image-crop-picker";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -50,7 +52,23 @@ export default function CreateModal() {
     },
   ]);
 
-  const [currentFrameNum, setCurrentFrameNum] = useState(4);
+  const [imageList, setImageList] = useState(["", "", "", ""]);
+
+  //const [currentFrameNum, setCurrentFrameNum] = useState(4);
+
+  const choosePhotoFromLibrary = (i: number) => {
+    console.log("이미지 선택");
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then((image) => {
+      //console.log(image);
+      var temp = [...imageList];
+      temp[i] = image.path;
+      setImageList(temp);
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -68,8 +86,12 @@ export default function CreateModal() {
             marginTop: 50,
           }}
         >
-          {[...Array(currentFrameNum)].map((a) => (
-            <TouchableOpacity>
+          {imageList.map((a, i) => (
+            <TouchableOpacity
+              onPress={() => {
+                choosePhotoFromLibrary(i);
+              }}
+            >
               <View
                 style={{
                   width: 160,
@@ -80,7 +102,14 @@ export default function CreateModal() {
                   alignItems: "center",
                 }}
               >
-                <FontAwesome name="camera" size={50} color="black" />
+                {a === "" ? (
+                  <FontAwesome name="camera" size={50} color="black" />
+                ) : (
+                  <Image
+                    source={{ uri: a }}
+                    style={{ width: "100%", height: "100%", borderRadius: 10 }}
+                  ></Image>
+                )}
               </View>
             </TouchableOpacity>
           ))}
