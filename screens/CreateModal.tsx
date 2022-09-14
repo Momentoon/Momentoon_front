@@ -22,6 +22,8 @@ import { Feather } from "@expo/vector-icons";
 import ViewShot from "react-native-view-shot";
 //import { firebase_storage } from "../firebaseConfig";
 
+//import { getStorage } from "firebase/storage";
+
 export default function CreateModal() {
   const viewShotRef = useRef<any>();
 
@@ -63,9 +65,10 @@ export default function CreateModal() {
       cropping: true,
     }).then((image) => {
       //console.log(image);
+      /*
       var temp = [...imageList];
       temp[i] = image.path;
-      setImageList(temp);
+      setImageList(temp);*/
     });
   };
 
