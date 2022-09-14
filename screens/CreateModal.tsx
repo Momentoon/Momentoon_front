@@ -20,7 +20,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 
 import ViewShot from "react-native-view-shot";
-//import { firebase_storage } from "../firebaseConfig";
+import { firebase_storage } from "../firebaseConfig";
 
 //import { getStorage } from "firebase/storage";
 
@@ -65,10 +65,10 @@ export default function CreateModal() {
       cropping: true,
     }).then((image) => {
       //console.log(image);
-      /*
+
       var temp = [...imageList];
       temp[i] = image.path;
-      setImageList(temp);*/
+      setImageList(temp);
     });
   };
 
@@ -89,24 +89,29 @@ export default function CreateModal() {
   /*완성된 이미지 추출*/
   const captureViewShot = async () => {
     const imageURI = await viewShotRef.current.capture();
-
+    //console.log(imageURI);
+    /*
     console.log(imageURI);
     var test = [...imageList];
     test[0] = imageURI;
-    setImageList(test);
+    setImageList(test);*/
+
+    uploadImage(imageURI, uuidv4());
   };
 
   /*이미지 파이어베이스 스토리지에 업로드*/
-  const uploadImage = async (
-    uri: String,
-    name: String,
-    firebasePath: String
-  ) => {
-    /*
-    const reference = firebase_storage.ref(`/images/UPLOAD/${uuidv4}`);
+  const uploadImage = async (uri: string, name: String) => {
+    const reference = firebase_storage.ref(`/images/UPLOAD/${name}`);
 
-    await reference.put(uri.blob)*/
-    //const reference = storage
+    await reference.put(await uriToBlob(encodeURI(uri)));
+
+    console.log(await reference.getDownloadURL());
+  };
+
+  const uriToBlob = async (uri: string) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    return blob;
   };
 
   /*uuid 생성 함수*/
