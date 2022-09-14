@@ -7,7 +7,7 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
@@ -19,16 +19,11 @@ import { SimpleLineIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 
-export default function CreateModal() {
-  /*
-  useEffect(() => {
-    [...Array(currentFrameNum)].map((a) => {
-      console.log(a);
-    });
-  }, []);*/
+import ViewShot from "react-native-view-shot";
+//import { firebase_storage } from "../firebaseConfig";
 
-  //const dimensions = Dimensions.get("window");
-  //const screenHeight = dimensions.height;
+export default function CreateModal() {
+  const viewShotRef = useRef<any>();
 
   const [currentMode, setCurrentMode] = useState(0);
 
@@ -88,6 +83,41 @@ export default function CreateModal() {
     setImageList(temp);
   };
 
+  /*완성된 이미지 추출*/
+  const captureViewShot = async () => {
+    const imageURI = await viewShotRef.current.capture();
+
+    console.log(imageURI);
+    var test = [...imageList];
+    test[0] = imageURI;
+    setImageList(test);
+  };
+
+  /*이미지 파이어베이스 스토리지에 업로드*/
+  const uploadImage = async (
+    uri: String,
+    name: String,
+    firebasePath: String
+  ) => {
+    /*
+    const reference = firebase_storage.ref(`/images/UPLOAD/${uuidv4}`);
+
+    await reference.put(uri.blob)*/
+    //const reference = storage
+  };
+
+  /*uuid 생성 함수*/
+  function uuidv4() {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      function (c) {
+        var r = (Math.random() * 16) | 0,
+          v = c == "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      }
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* Use a light status bar on iOS to account for the black space above the modal */}
@@ -96,49 +126,58 @@ export default function CreateModal() {
       {currentMode === 0 ? ( //기본 모드
         <>
           <ScrollView style={{ width: "100%", backgroundColor: "black" }}>
-            <View
-              style={{
-                width: "100%",
-                backgroundColor: "black",
-                flexDirection: "row",
-                flexWrap: "wrap",
-                justifyContent: "space-between",
-                marginTop: 50,
-                paddingLeft: "8%",
-                paddingRight: "8%",
+            <ViewShot
+              ref={viewShotRef}
+              style={{ flex: 1, backgroundColor: "black" }}
+              options={{
+                fileName: uuidv4(),
+                format: "jpg",
+                quality: 1.0,
               }}
             >
-              {imageList.map((a, i) => (
-                <>
-                  <TouchableOpacity
-                    onPress={() => {
-                      choosePhotoFromLibrary(i);
-                    }}
-                  >
-                    <View
-                      style={{
-                        width: 160,
-                        height: 160,
-                        marginBottom: 17,
-                        borderRadius: 10,
-                        justifyContent: "center",
-                        alignItems: "center",
+              <View
+                style={{
+                  width: "100%",
+                  backgroundColor: "black",
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  justifyContent: "space-between",
+                  marginTop: 50,
+                  paddingLeft: "8%",
+                  paddingRight: "8%",
+                }}
+              >
+                {imageList.map((a, i) => (
+                  <>
+                    <TouchableOpacity
+                      onPress={() => {
+                        choosePhotoFromLibrary(i);
                       }}
                     >
-                      {a === "" ? (
-                        <FontAwesome name="camera" size={50} color="black" />
-                      ) : (
-                        <Image
-                          source={{ uri: a }}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            borderRadius: 10,
-                          }}
-                        ></Image>
-                      )}
-                    </View>
-                    {/*
+                      <View
+                        style={{
+                          width: 160,
+                          height: 160,
+                          marginBottom: 17,
+                          borderRadius: 10,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        {a === "" ? (
+                          <FontAwesome name="camera" size={50} color="black" />
+                        ) : (
+                          <Image
+                            source={{ uri: a }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderRadius: 10,
+                            }}
+                          ></Image>
+                        )}
+                      </View>
+                      {/*
                     <View
                       style={{
                         width: 28,
@@ -148,10 +187,11 @@ export default function CreateModal() {
                         backgroundColor: "#ADADAD",
                       }}
                     ></View>*/}
-                  </TouchableOpacity>
-                </>
-              ))}
-            </View>
+                    </TouchableOpacity>
+                  </>
+                ))}
+              </View>
+            </ViewShot>
           </ScrollView>
 
           <View
@@ -219,6 +259,7 @@ export default function CreateModal() {
                 justifyContent: "center",
                 alignItems: "center",
               }}
+              onPress={captureViewShot}
             >
               <Text style={{ fontSize: 24, fontWeight: "bold" }}>Complete</Text>
             </TouchableOpacity>
