@@ -21,10 +21,14 @@ import { Feather } from "@expo/vector-icons";
 
 import ViewShot from "react-native-view-shot";
 import { firebase_storage } from "../firebaseConfig";
+import { firebase_db } from "../firebaseConfig";
 
-//import { getStorage } from "firebase/storage";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { RootTabScreenProps } from "../types";
 
-export default function CreateModal() {
+export default function CreateModal({
+  navigation,
+}: RootTabScreenProps<"Create">) {
   const viewShotRef = useRef<any>();
 
   const [currentMode, setCurrentMode] = useState(0);
@@ -96,16 +100,30 @@ export default function CreateModal() {
     test[0] = imageURI;
     setImageList(test);*/
 
-    uploadImage(imageURI, uuidv4());
+    uploadStorage(imageURI, uuidv4());
   };
 
   /*이미지 파이어베이스 스토리지에 업로드*/
-  const uploadImage = async (uri: string, name: String) => {
+  const uploadStorage = async (uri: string, name: String) => {
     const reference = firebase_storage.ref(`/images/UPLOAD/${name}`);
 
     await reference.put(await uriToBlob(encodeURI(uri)));
 
-    console.log(await reference.getDownloadURL());
+    //console.log(await reference.getDownloadURL());
+    uploadDatabase(await reference.getDownloadURL());
+  };
+
+  /*이미지 파이어베이스 리얼타임 데이터베이스에 업로드*/
+  const uploadDatabase = async (imgURL: string) => {
+    firebase_db
+      .ref("/images")
+      .once("value")
+      .then(async (snapshot) => {
+        //console.log(snapshot.val().length);
+        const reference = firebase_db.ref(`/images/${snapshot.val().length}`);
+        await reference.update({ url: imgURL });
+        navigation.goBack();
+      });
   };
 
   const uriToBlob = async (uri: string) => {
