@@ -8,8 +8,9 @@ import {
   ListRenderItem,
   Dimensions,
   Platform,
+  RefreshControl,
 } from "react-native";
-import { useState, useEffect, ReactElement } from "react";
+import { useState, useEffect, ReactElement, useCallback } from "react";
 import { withSafeAreaInsets } from "react-native-safe-area-context";
 import AutoHeightImage from "react-native-auto-height-image";
 import MasonryList from "@react-native-seoul/masonry-list";
@@ -32,6 +33,8 @@ export default function HomeTab({ navigation }: RootTabScreenProps<"TabOne">) {
   const [imageList, setImageList] = useState([
     { url: "https://i.imgur.com/8N4eONn.png" },
   ]);
+
+  const [refreshing, setRefreshing] = useState(false);
 
   const dimensions = Dimensions.get("window");
   const screenWidth = dimensions.width;
@@ -62,6 +65,23 @@ export default function HomeTab({ navigation }: RootTabScreenProps<"TabOne">) {
       </View>
     );
   };
+
+  const wait = (timeout: any) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    firebase_db
+      .ref("/images")
+      .once("value")
+      .then((snapshot) => {
+        console.log("파베 연동");
+        //console.log(snapshot.val());
+        setImageList(snapshot.val());
+      });
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -132,6 +152,13 @@ export default function HomeTab({ navigation }: RootTabScreenProps<"TabOne">) {
                 width: 100 * vw,
                 marginBottom: 50,
               }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  tintColor="white"
+                />
+              }
             >
               <View
                 style={{
