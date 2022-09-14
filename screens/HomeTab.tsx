@@ -7,6 +7,7 @@ import {
   FlatList,
   ListRenderItem,
   Dimensions,
+  Platform,
 } from "react-native";
 import { useState, useEffect, ReactElement } from "react";
 import { withSafeAreaInsets } from "react-native-safe-area-context";
@@ -41,6 +42,7 @@ export default function HomeTab({ navigation }: RootTabScreenProps<"TabOne">) {
       .once("value")
       .then((snapshot) => {
         console.log("파베 연동");
+        //console.log(snapshot.val());
         setImageList(snapshot.val());
       });
   }, []);
