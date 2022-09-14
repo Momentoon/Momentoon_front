@@ -1,3 +1,4 @@
+
 #import "AppDelegate.h"
 
 #import <React/RCTBridge.h>
@@ -33,6 +34,16 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+
+/*
+  #ifdef FB_SONARKIT_ENABLED
+    InitializeFlipper(application);
+  #endif
+
+  if ([FIRApp defaultApp] == nil) { // 추가 (line:35)
+    [FIRApp configure];
+  }*/
+
   RCTAppSetupPrepareApp(application);
 
   RCTBridge *bridge = [self.reactDelegate createBridgeWithDelegate:self launchOptions:launchOptions];
