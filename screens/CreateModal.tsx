@@ -12,6 +12,7 @@ import { useState, useEffect, useRef } from "react";
 import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 import ImagePicker from "react-native-image-crop-picker";
+import ColorPicker from "react-native-color-picker-ios";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -144,17 +145,32 @@ export default function CreateModal({
     );
   }
 
+  //배경 색
+  const [bgColor, setBGcolor] = useState("black");
+
+  useEffect(() => {
+    if (currentMode == 4) {
+      ColorPicker.showColorPicker(
+        { supportsAlpha: true, initialColor: "black" },
+        (color) => {
+          setCurrentMode(0);
+          setBGcolor(color);
+        }
+      );
+    }
+  }, [currentMode]);
+
   return (
     <View style={styles.container}>
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
 
-      {currentMode === 0 ? ( //기본 모드
+      {currentMode === 0 || currentMode === 4 ? ( //기본 모드
         <>
           <ScrollView style={{ width: "100%", backgroundColor: "black" }}>
             <ViewShot
               ref={viewShotRef}
-              style={{ flex: 1, backgroundColor: "black" }}
+              style={{ flex: 1, backgroundColor: bgColor }}
               options={{
                 fileName: uuidv4(),
                 format: "jpg",
@@ -164,7 +180,7 @@ export default function CreateModal({
               <View
                 style={{
                   width: "100%",
-                  backgroundColor: "black",
+                  backgroundColor: bgColor,
                   flexDirection: "row",
                   flexWrap: "wrap",
                   justifyContent: "space-between",
@@ -203,16 +219,6 @@ export default function CreateModal({
                           ></Image>
                         )}
                       </View>
-                      {/*
-                    <View
-                      style={{
-                        width: 28,
-                        height: 28,
-                        borderRadius: 14,
-                        position: "absolute",
-                        backgroundColor: "#ADADAD",
-                      }}
-                    ></View>*/}
                     </TouchableOpacity>
                   </>
                 ))}
