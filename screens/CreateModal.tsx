@@ -8,11 +8,13 @@ import {
   Image,
 } from "react-native";
 import { useState, useEffect, useRef } from "react";
+import * as RNFS from "react-native-fs";
 
 import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 import ImagePicker from "react-native-image-crop-picker";
 import ColorPicker from "react-native-color-picker-ios";
+import PhotoEditor from "@baronha/react-native-photo-editor";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -26,6 +28,7 @@ import { firebase_db } from "../firebaseConfig";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootTabScreenProps } from "../types";
+import { async } from "@firebase/util";
 
 export default function CreateModal({
   navigation,
@@ -58,6 +61,11 @@ export default function CreateModal({
   ]);
 
   const [imageList, setImageList] = useState(["", "", "", ""]);
+  const stickers: Array<String> = [
+    "https://cdn-icons-png.flaticon.com/512/5272/5272912.png",
+    "https://cdn-icons-png.flaticon.com/512/5272/5272913.png",
+    "https://cdn-icons-png.flaticon.com/512/5272/5272916.png",
+  ];
 
   //const [currentFrameNum, setCurrentFrameNum] = useState(4);
 
@@ -69,8 +77,6 @@ export default function CreateModal({
       height: 400,
       cropping: true,
     }).then((image) => {
-      //console.log(image);
-
       var temp = [...imageList];
       temp[i] = image.path;
       setImageList(temp);
@@ -148,6 +154,27 @@ export default function CreateModal({
   //배경 색
   const [bgColor, setBGcolor] = useState("black");
 
+  const openEditor = async () => {
+    try {
+      /*
+      const path =
+        "https://static.remove.bg/remove-bg-web/c4b29bf4b97131238fda6316e24c9b3606c18000/assets/start-1abfb4fe2980eabfbbaaa4365a0692539f7cd2725f324f904565a9a744f8e214.jpg";*/
+      const path = "file://" + imageList[0];
+      const result = await PhotoEditor.open({
+        path,
+        stickers,
+      });
+
+      console.log(result);
+    } catch (e) {
+      console.log("error", e);
+      setCurrentMode(0);
+    } finally {
+      console.log("finally");
+      setCurrentMode(0);
+    }
+  };
+
   useEffect(() => {
     if (currentMode == 4) {
       ColorPicker.showColorPicker(
@@ -158,6 +185,11 @@ export default function CreateModal({
         }
       );
     }
+
+    if (currentMode == 3) {
+      console.log("test");
+      openEditor();
+    }
   }, [currentMode]);
 
   return (
@@ -165,7 +197,7 @@ export default function CreateModal({
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
 
-      {currentMode === 0 || currentMode === 4 ? ( //기본 모드
+      {currentMode === 0 || currentMode === 4 || currentMode === 3 ? ( //기본 모드
         <>
           <ScrollView style={{ width: "100%", backgroundColor: "black" }}>
             <ViewShot
@@ -187,6 +219,7 @@ export default function CreateModal({
                   marginTop: 50,
                   paddingLeft: "8%",
                   paddingRight: "8%",
+                  paddingBottom: 25,
                 }}
               >
                 {imageList.map((a, i) => (
