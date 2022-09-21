@@ -62,9 +62,9 @@ export default function CreateModal({
 
   const [imageList, setImageList] = useState(["", "", "", ""]);
   const stickers: Array<String> = [
-    "https://cdn-icons-png.flaticon.com/512/5272/5272912.png",
-    "https://cdn-icons-png.flaticon.com/512/5272/5272913.png",
-    "https://cdn-icons-png.flaticon.com/512/5272/5272916.png",
+    "https://i.imgur.com/NFqEru4.png",
+    "https://i.imgur.com/HWT11rm.png",
+    "https://i.imgur.com/z6Ouc9D.png",
   ];
 
   //const [currentFrameNum, setCurrentFrameNum] = useState(4);
@@ -154,24 +154,27 @@ export default function CreateModal({
   //배경 색
   const [bgColor, setBGcolor] = useState("black");
 
-  const openEditor = async () => {
+  //말풍선 편집 실행
+  const openBubbleEditor = async (i: number) => {
     try {
       /*
       const path =
         "https://static.remove.bg/remove-bg-web/c4b29bf4b97131238fda6316e24c9b3606c18000/assets/start-1abfb4fe2980eabfbbaaa4365a0692539f7cd2725f324f904565a9a744f8e214.jpg";*/
-      const path = "file://" + imageList[0];
+      const path = "file://" + imageList[i];
       const result = await PhotoEditor.open({
         path,
         stickers,
       });
-
-      console.log(result);
+      const result2: string = result.toString();
+      var temp = [...imageList];
+      temp[i] = result2;
+      setImageList(temp);
     } catch (e) {
       console.log("error", e);
-      setCurrentMode(0);
+      //setCurrentMode(0);
     } finally {
       console.log("finally");
-      setCurrentMode(0);
+      //setCurrentMode(0);
     }
   };
 
@@ -186,10 +189,11 @@ export default function CreateModal({
       );
     }
 
+    /*
     if (currentMode == 3) {
       console.log("test");
       openEditor();
-    }
+    }*/
   }, [currentMode]);
 
   return (
@@ -197,7 +201,7 @@ export default function CreateModal({
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
 
-      {currentMode === 0 || currentMode === 4 || currentMode === 3 ? ( //기본 모드
+      {currentMode === 0 || currentMode === 4 ? ( //기본 모드
         <>
           <ScrollView style={{ width: "100%", backgroundColor: "black" }}>
             <ViewShot
@@ -412,6 +416,90 @@ export default function CreateModal({
                   <FontAwesome name="plus" size={50} color="black" />
                 </View>
               </TouchableOpacity>
+            </View>
+          </ScrollView>
+          <View
+            style={{
+              width: "100%",
+              height: 200,
+              backgroundColor: "black",
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                width: "90%",
+                height: 48,
+                backgroundColor: "#C4C4C4",
+                marginTop: 25,
+                borderRadius: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => {
+                setCurrentMode(0);
+              }}
+            >
+              <Text style={{ fontSize: 24, fontWeight: "bold" }}>Complete</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      ) : currentMode === 3 ? ( //말풍선 편집 모드
+        <>
+          <ScrollView style={{ width: "100%", backgroundColor: "black" }}>
+            <View
+              style={{
+                width: "100%",
+                backgroundColor: "black",
+                flexDirection: "row",
+                flexWrap: "wrap",
+                justifyContent: "space-between",
+                marginTop: 50,
+                paddingLeft: "8%",
+                paddingRight: "8%",
+              }}
+            >
+              {imageList.map((a, i) => (
+                <>
+                  <View
+                    style={{
+                      width: 160,
+                      height: 160,
+                      marginBottom: 17,
+                      borderRadius: 10,
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => {
+                        openBubbleEditor(i);
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          borderRadius: 10,
+                        }}
+                      >
+                        {a === "" ? (
+                          <FontAwesome name="camera" size={50} color="black" />
+                        ) : (
+                          <Image
+                            source={{ uri: a }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderRadius: 10,
+                            }}
+                          ></Image>
+                        )}
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ))}
             </View>
           </ScrollView>
           <View
