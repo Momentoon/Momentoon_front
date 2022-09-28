@@ -21,6 +21,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
 import ViewShot from "react-native-view-shot";
 import { firebase_storage } from "../firebaseConfig";
@@ -29,6 +30,8 @@ import { firebase_db } from "../firebaseConfig";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootTabScreenProps } from "../types";
 import { async } from "@firebase/util";
+
+import { DragResizeBlock } from "react-native-drag-resize";
 
 export default function CreateModal({
   navigation,
@@ -60,7 +63,12 @@ export default function CreateModal({
     },
   ]);
 
-  const [imageList, setImageList] = useState(["", "", "", ""]);
+  const [imageList, setImageList] = useState([
+    { url: "", width: 160 },
+    { url: "", width: 160 },
+    { url: "", width: 160 },
+    { url: "", width: 160 },
+  ]);
   const stickers: Array<String> = [
     "https://i.imgur.com/NFqEru4.png",
     "https://i.imgur.com/HWT11rm.png",
@@ -78,7 +86,7 @@ export default function CreateModal({
       cropping: true,
     }).then((image) => {
       var temp = [...imageList];
-      temp[i] = image.path;
+      temp[i].url = image.path;
       setImageList(temp);
     });
   };
@@ -86,7 +94,7 @@ export default function CreateModal({
   /*프레임추가*/
   const addFrame = () => {
     var temp = [...imageList];
-    temp.push("");
+    temp.push({ url: "", width: 160 });
     setImageList(temp);
   };
 
@@ -94,6 +102,15 @@ export default function CreateModal({
   const deleteFrame = (i: number) => {
     var temp = [...imageList];
     temp.splice(i, 1);
+    setImageList(temp);
+  };
+
+  /*프레임 사이즈 조절*/
+  const resizeFrame = (i: number) => {
+    var temp = [...imageList];
+
+    temp[i].width == 160 ? (temp[i].width = 350) : (temp[i].width = 160);
+
     setImageList(temp);
   };
 
@@ -160,14 +177,14 @@ export default function CreateModal({
       /*
       const path =
         "https://static.remove.bg/remove-bg-web/c4b29bf4b97131238fda6316e24c9b3606c18000/assets/start-1abfb4fe2980eabfbbaaa4365a0692539f7cd2725f324f904565a9a744f8e214.jpg";*/
-      const path = "file://" + imageList[i];
+      const path = "file://" + imageList[i].url;
       const result = await PhotoEditor.open({
         path,
         stickers,
       });
       const result2: string = result.toString();
       var temp = [...imageList];
-      temp[i] = result2;
+      temp[i].url = result2;
       setImageList(temp);
     } catch (e) {
       console.log("error", e);
@@ -235,7 +252,7 @@ export default function CreateModal({
                     >
                       <View
                         style={{
-                          width: 160,
+                          width: a.width,
                           height: 160,
                           marginBottom: 17,
                           borderRadius: 10,
@@ -243,11 +260,11 @@ export default function CreateModal({
                           alignItems: "center",
                         }}
                       >
-                        {a === "" ? (
+                        {a.url === "" ? (
                           <FontAwesome name="camera" size={50} color="black" />
                         ) : (
                           <Image
-                            source={{ uri: a }}
+                            source={{ uri: a.url }}
                             style={{
                               width: "100%",
                               height: "100%",
@@ -353,7 +370,7 @@ export default function CreateModal({
                 <>
                   <View
                     style={{
-                      width: 160,
+                      width: a.width,
                       height: 160,
                       marginBottom: 17,
                       borderRadius: 10,
@@ -368,11 +385,11 @@ export default function CreateModal({
                         borderRadius: 10,
                       }}
                     >
-                      {a === "" ? (
+                      {a.url === "" ? (
                         <FontAwesome name="camera" size={50} color="black" />
                       ) : (
                         <Image
-                          source={{ uri: a }}
+                          source={{ uri: a.url }}
                           style={{
                             width: "100%",
                             height: "100%",
@@ -397,6 +414,43 @@ export default function CreateModal({
                       }}
                     >
                       <Feather name="minus" size={24} color="black" />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 14,
+                        position: "absolute",
+                        backgroundColor: "#ADADAD",
+                        marginTop: 60,
+                        alignSelf: a.width == 160 ? "baseline" : "flex-end",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                      onPress={() => {
+                        resizeFrame(i);
+                      }}
+                    >
+                      <AntDesign name="arrowleft" size={24} color="black" />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 14,
+                        position: "absolute",
+                        backgroundColor: "#ADADAD",
+                        marginTop: 60,
+                        alignSelf: a.width == 160 ? "flex-end" : "baseline",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                      onPress={() => {
+                        resizeFrame(i);
+                      }}
+                    >
+                      <AntDesign name="arrowright" size={24} color="black" />
                     </TouchableOpacity>
                   </View>
                 </>
@@ -463,7 +517,7 @@ export default function CreateModal({
                 <>
                   <View
                     style={{
-                      width: 160,
+                      width: a.width,
                       height: 160,
                       marginBottom: 17,
                       borderRadius: 10,
@@ -483,11 +537,11 @@ export default function CreateModal({
                           borderRadius: 10,
                         }}
                       >
-                        {a === "" ? (
+                        {a.url === "" ? (
                           <FontAwesome name="camera" size={50} color="black" />
                         ) : (
                           <Image
-                            source={{ uri: a }}
+                            source={{ uri: a.url }}
                             style={{
                               width: "100%",
                               height: "100%",
