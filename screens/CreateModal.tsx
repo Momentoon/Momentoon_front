@@ -31,14 +31,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootTabScreenProps } from "../types";
 import { async } from "@firebase/util";
 
-import { DragResizeBlock } from "react-native-drag-resize";
-
 export default function CreateModal({
   navigation,
 }: RootTabScreenProps<"Create">) {
   const viewShotRef = useRef<any>();
 
   const [currentMode, setCurrentMode] = useState(0);
+
+  const [postNum, setPostNum] = useState(0);
 
   const [menuList, setMenuList] = useState([
     {
@@ -118,24 +118,28 @@ export default function CreateModal({
   /*완성된 이미지 추출*/
   const captureViewShot = async () => {
     const imageURI = await viewShotRef.current.capture();
-    //console.log(imageURI);
-    /*
-    console.log(imageURI);
-    var test = [...imageList];
-    test[0] = imageURI;
-    setImageList(test);*/
 
     uploadStorage(imageURI, uuidv4());
   };
 
   /*이미지 파이어베이스 스토리지에 업로드*/
   const uploadStorage = async (uri: string, name: String) => {
+    name = "tempN_" + name + ".jpg";
     const reference = firebase_storage.ref(`/images/UPLOAD/${name}`);
 
     await reference.put(await uriToBlob(encodeURI(uri)));
 
     //console.log(await reference.getDownloadURL());
     uploadDatabase(await reference.getDownloadURL());
+  };
+
+  const getPostNum = async () => {
+    firebase_db
+      .ref("/images")
+      .once("value")
+      .then(async (snapshot) => {
+        await setPostNum(snapshot.val().length);
+      });
   };
 
   /*이미지 파이어베이스 리얼타임 데이터베이스에 업로드*/

@@ -23,6 +23,8 @@ import {
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
+import Signin from "../screens/SignInUp/Signin";
+import Signup from "../screens/SignInUp/Signup";
 import CreateModal from "../screens/CreateModal";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import HomeTab from "../screens/HomeTab";
@@ -61,7 +63,21 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="Signin">
+      <Stack.Screen
+        name="Signin"
+        component={Signin}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Signup"
+        component={Signup}
+        options={{
+          headerStyle: {
+            backgroundColor: "black",
+          },
+        }}
+      />
       <Stack.Screen
         name="Root"
         component={BottomTabNavigator}
