@@ -72,11 +72,20 @@ function RootNavigator() {
       <Stack.Screen
         name="Signup"
         component={Signup}
-        options={{
+        options={({ navigation }) => ({
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.pop();
+              }}
+            >
+              <Ionicons name="chevron-back" size={30} color="white" />
+            </TouchableOpacity>
+          ),
           headerStyle: {
             backgroundColor: "black",
           },
-        }}
+        })}
       />
       <Stack.Screen
         name="Root"

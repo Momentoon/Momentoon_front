@@ -1,6 +1,13 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import firebase from "firebase/compat/app";
+import {
+  getAuth, // authentication 설정
+  signInWithPopup, //google 로그인을 팝업창에 띄우기 위해
+  GoogleAuthProvider, //google login 기능
+  signInWithEmailAndPassword, // email 로그인
+  createUserWithEmailAndPassword, //email 회원가입
+} from "firebase/auth";
 
 import "firebase/compat/database";
 import "firebase/compat/storage";
@@ -24,6 +31,17 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }*/
 firebase.initializeApp(firebaseConfig);
+
+const auth = getAuth();
+
+export const signup = (email: any, password: any) => {
+  return createUserWithEmailAndPassword(auth, email, password);
+};
+
+//Email 회원가입
+export const signin = (email: any, password: any) => {
+  return signInWithEmailAndPassword(auth, email, password);
+};
 
 export const firebase_db = firebase.database();
 export const firebase_storage = firebase.storage();
