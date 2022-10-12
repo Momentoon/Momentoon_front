@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Text, View } from "../../components/Themed";
 import { StyleSheet, TextInput, TouchableOpacity } from "react-native";
-import { signup, signin } from "../../firebaseConfig";
+import { signup } from "../../firebaseConfig";
 
 function Signup({ navigation }) {
   const [email, setEmail] = useState("");

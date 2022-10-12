@@ -38,7 +38,6 @@ export const signup = (email: any, password: any) => {
   return createUserWithEmailAndPassword(auth, email, password);
 };
 
-//Email 회원가입
 export const signin = (email: any, password: any) => {
   return signInWithEmailAndPassword(auth, email, password);
 };
