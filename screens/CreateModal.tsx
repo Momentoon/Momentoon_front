@@ -75,7 +75,35 @@ export default function CreateModal({
     "https://i.imgur.com/z6Ouc9D.png",
   ];
 
-  //const [currentFrameNum, setCurrentFrameNum] = useState(4);
+  /*필터링 적용 함수*/
+  const filtering = async () => {
+    imageList.map(async (a, i) => {
+      //console.log(a.url);
+
+      if (a.url != "") {
+        var name = uuidv4();
+        name = "tempN_" + name + ".jpg";
+
+        const reference = firebase_storage.ref(`/images/UPLOAD/${name}`);
+        await reference.put(await uriToBlob(encodeURI(a.url)));
+
+        const getRef = await firebase_storage.ref(
+          `/images/FILTERED/FCBackup${name}`
+        );
+        while (1) {
+          try {
+            var test = await getRef.getDownloadURL();
+            var tempList = [...imageList];
+            tempList[i].url = test;
+            setImageList(tempList);
+            break;
+          } catch (err) {
+            console.log(err);
+          }
+        }
+      }
+    });
+  };
 
   /*갤러리에서 이미지 가져오기*/
   const choosePhotoFromLibrary = (i: number) => {
@@ -125,21 +153,12 @@ export default function CreateModal({
   /*이미지 파이어베이스 스토리지에 업로드*/
   const uploadStorage = async (uri: string, name: String) => {
     name = "tempN_" + name + ".jpg";
-    const reference = firebase_storage.ref(`/images/UPLOAD/${name}`);
+    const reference = firebase_storage.ref(`/images/COMPLETE/${name}`);
 
     await reference.put(await uriToBlob(encodeURI(uri)));
 
     //console.log(await reference.getDownloadURL());
     uploadDatabase(await reference.getDownloadURL());
-  };
-
-  const getPostNum = async () => {
-    firebase_db
-      .ref("/images")
-      .once("value")
-      .then(async (snapshot) => {
-        await setPostNum(snapshot.val().length);
-      });
   };
 
   /*이미지 파이어베이스 리얼타임 데이터베이스에 업로드*/
@@ -148,7 +167,6 @@ export default function CreateModal({
       .ref("/images")
       .once("value")
       .then(async (snapshot) => {
-        //console.log(snapshot.val().length);
         const reference = firebase_db.ref(`/images/${snapshot.val().length}`);
         await reference.update({ url: imgURL });
         navigation.goBack();
@@ -179,10 +197,12 @@ export default function CreateModal({
   //말풍선 편집 실행
   const openBubbleEditor = async (i: number) => {
     try {
-      /*
-      const path =
-        "https://static.remove.bg/remove-bg-web/c4b29bf4b97131238fda6316e24c9b3606c18000/assets/start-1abfb4fe2980eabfbbaaa4365a0692539f7cd2725f324f904565a9a744f8e214.jpg";*/
-      const path = "file://" + imageList[i].url;
+      var path;
+      if (imageList[i].url.startsWith("https")) {
+        path = imageList[i].url;
+      } else {
+        path = "file://" + imageList[i].url;
+      }
       const result = await PhotoEditor.open({
         path,
         stickers,
@@ -312,7 +332,11 @@ export default function CreateModal({
                 >
                   <TouchableOpacity
                     onPress={() => {
-                      setCurrentMode(i + 1);
+                      if (i == 1) {
+                        filtering();
+                      } else {
+                        setCurrentMode(i + 1);
+                      }
                     }}
                   >
                     <View
