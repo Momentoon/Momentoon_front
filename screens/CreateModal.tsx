@@ -37,6 +37,7 @@ export default function CreateModal({
   const viewShotRef = useRef<any>();
 
   const [currentMode, setCurrentMode] = useState(0);
+  const [currentFrame, setCurrentFrame] = useState(0);
 
   const [postNum, setPostNum] = useState(0);
 
@@ -61,6 +62,11 @@ export default function CreateModal({
       title: "Back-\nground",
       icon: <FontAwesome name="image" size={50} color="black" />,
     },
+  ]);
+
+  const [frameList, setFrameList] = useState([
+    { title: "round", img: "https://i.imgur.com/PqvaCiD.png" },
+    { title: "edge", img: "https://i.imgur.com/ciqfP0h.png" },
   ]);
 
   const [imageList, setImageList] = useState([
@@ -275,29 +281,67 @@ export default function CreateModal({
                         choosePhotoFromLibrary(i);
                       }}
                     >
-                      <View
-                        style={{
-                          width: a.width,
-                          height: 160,
-                          marginBottom: 17,
-                          borderRadius: 10,
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        {a.url === "" ? (
-                          <FontAwesome name="camera" size={50} color="black" />
-                        ) : (
-                          <Image
-                            source={{ uri: a.url }}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              borderRadius: 10,
-                            }}
-                          ></Image>
-                        )}
-                      </View>
+                      {currentFrame == 0 ? (
+                        <View
+                          style={{
+                            width: a.width,
+                            height: 160,
+                            marginBottom: 17,
+                            borderRadius: 10,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderStyle: "solid",
+                            borderWidth: 1,
+                            borderColor: "black",
+                          }}
+                        >
+                          {a.url === "" ? (
+                            <FontAwesome
+                              name="camera"
+                              size={50}
+                              color="black"
+                            />
+                          ) : (
+                            <Image
+                              source={{ uri: a.url }}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                borderRadius: 10,
+                              }}
+                            ></Image>
+                          )}
+                        </View>
+                      ) : (
+                        <View
+                          style={{
+                            width: a.width,
+                            height: 160,
+                            marginBottom: 17,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderStyle: "solid",
+                            borderWidth: 1,
+                            borderColor: "black",
+                          }}
+                        >
+                          {a.url === "" ? (
+                            <FontAwesome
+                              name="camera"
+                              size={50}
+                              color="black"
+                            />
+                          ) : (
+                            <Image
+                              source={{ uri: a.url }}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                              }}
+                            ></Image>
+                          )}
+                        </View>
+                      )}
                     </TouchableOpacity>
                   </>
                 ))}
@@ -368,7 +412,7 @@ export default function CreateModal({
               style={{
                 width: "90%",
                 height: 48,
-                backgroundColor: "#C4C4C4",
+                backgroundColor: "#124FEE",
                 marginTop: 25,
                 borderRadius: 10,
                 justifyContent: "center",
@@ -376,17 +420,21 @@ export default function CreateModal({
               }}
               onPress={captureViewShot}
             >
-              <Text style={{ fontSize: 24, fontWeight: "bold" }}>Complete</Text>
+              <Text
+                style={{ fontSize: 24, fontWeight: "bold", color: "white" }}
+              >
+                Complete
+              </Text>
             </TouchableOpacity>
           </View>
         </>
       ) : currentMode === 1 ? ( //프레임 편집 모드
         <>
-          <ScrollView style={{ width: "100%", backgroundColor: "black" }}>
+          <ScrollView style={{ width: "100%", backgroundColor: bgColor }}>
             <View
               style={{
                 width: "100%",
-                backgroundColor: "black",
+                backgroundColor: bgColor,
                 flexDirection: "row",
                 flexWrap: "wrap",
                 justifyContent: "space-between",
@@ -397,164 +445,16 @@ export default function CreateModal({
             >
               {imageList.map((a, i) => (
                 <>
-                  <View
-                    style={{
-                      width: a.width,
-                      height: 160,
-                      marginBottom: 17,
-                      borderRadius: 10,
-                    }}
-                  >
+                  {currentFrame == 0 ? (
                     <View
                       style={{
-                        width: "100%",
-                        height: "100%",
-                        justifyContent: "center",
-                        alignItems: "center",
+                        width: a.width,
+                        height: 160,
+                        marginBottom: 17,
                         borderRadius: 10,
-                      }}
-                    >
-                      {a.url === "" ? (
-                        <FontAwesome name="camera" size={50} color="black" />
-                      ) : (
-                        <Image
-                          source={{ uri: a.url }}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            borderRadius: 10,
-                          }}
-                        ></Image>
-                      )}
-                    </View>
-                    <TouchableOpacity
-                      style={{
-                        width: 28,
-                        height: 28,
-                        borderRadius: 14,
-                        position: "absolute",
-                        backgroundColor: "#ADADAD",
-                        alignSelf: "flex-end",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                      onPress={() => {
-                        deleteFrame(i);
-                      }}
-                    >
-                      <Feather name="minus" size={24} color="black" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={{
-                        width: 28,
-                        height: 28,
-                        borderRadius: 14,
-                        position: "absolute",
-                        backgroundColor: "#ADADAD",
-                        marginTop: 60,
-                        alignSelf: a.width == 160 ? "baseline" : "flex-end",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                      onPress={() => {
-                        resizeFrame(i);
-                      }}
-                    >
-                      <AntDesign name="arrowleft" size={24} color="black" />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={{
-                        width: 28,
-                        height: 28,
-                        borderRadius: 14,
-                        position: "absolute",
-                        backgroundColor: "#ADADAD",
-                        marginTop: 60,
-                        alignSelf: a.width == 160 ? "flex-end" : "baseline",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                      onPress={() => {
-                        resizeFrame(i);
-                      }}
-                    >
-                      <AntDesign name="arrowright" size={24} color="black" />
-                    </TouchableOpacity>
-                  </View>
-                </>
-              ))}
-
-              <TouchableOpacity onPress={addFrame}>
-                <View
-                  style={{
-                    width: 160,
-                    height: 160,
-                    marginBottom: 17,
-                    borderRadius: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <FontAwesome name="plus" size={50} color="black" />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-          <View
-            style={{
-              width: "100%",
-              height: 200,
-              backgroundColor: "black",
-              alignItems: "center",
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                width: "90%",
-                height: 48,
-                backgroundColor: "#C4C4C4",
-                marginTop: 25,
-                borderRadius: 10,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-              onPress={() => {
-                setCurrentMode(0);
-              }}
-            >
-              <Text style={{ fontSize: 24, fontWeight: "bold" }}>Complete</Text>
-            </TouchableOpacity>
-          </View>
-        </>
-      ) : currentMode === 3 ? ( //말풍선 편집 모드
-        <>
-          <ScrollView style={{ width: "100%", backgroundColor: "black" }}>
-            <View
-              style={{
-                width: "100%",
-                backgroundColor: "black",
-                flexDirection: "row",
-                flexWrap: "wrap",
-                justifyContent: "space-between",
-                marginTop: 50,
-                paddingLeft: "8%",
-                paddingRight: "8%",
-              }}
-            >
-              {imageList.map((a, i) => (
-                <>
-                  <View
-                    style={{
-                      width: a.width,
-                      height: 160,
-                      marginBottom: 17,
-                      borderRadius: 10,
-                    }}
-                  >
-                    <TouchableOpacity
-                      onPress={() => {
-                        openBubbleEditor(i);
+                        borderColor: "black",
+                        borderStyle: "solid",
+                        borderWidth: 1,
                       }}
                     >
                       <View
@@ -579,8 +479,376 @@ export default function CreateModal({
                           ></Image>
                         )}
                       </View>
-                    </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: 14,
+                          position: "absolute",
+                          backgroundColor: "#ADADAD",
+                          alignSelf: "flex-end",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                        onPress={() => {
+                          deleteFrame(i);
+                        }}
+                      >
+                        <Feather name="minus" size={24} color="black" />
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: 14,
+                          position: "absolute",
+                          backgroundColor: "#ADADAD",
+                          marginTop: 60,
+                          alignSelf: a.width == 160 ? "baseline" : "flex-end",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderColor: "black",
+                        }}
+                        onPress={() => {
+                          resizeFrame(i);
+                        }}
+                      >
+                        <AntDesign name="arrowleft" size={24} color="black" />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: 14,
+                          position: "absolute",
+                          backgroundColor: "#ADADAD",
+                          marginTop: 60,
+                          alignSelf: a.width == 160 ? "flex-end" : "baseline",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                        onPress={() => {
+                          resizeFrame(i);
+                        }}
+                      >
+                        <AntDesign name="arrowright" size={24} color="black" />
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        width: a.width,
+                        height: 160,
+                        marginBottom: 17,
+                        borderColor: "black",
+                        borderStyle: "solid",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          borderRadius: 10,
+                        }}
+                      >
+                        {a.url === "" ? (
+                          <FontAwesome name="camera" size={50} color="black" />
+                        ) : (
+                          <Image
+                            source={{ uri: a.url }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                            }}
+                          ></Image>
+                        )}
+                      </View>
+                      <TouchableOpacity
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: 14,
+                          position: "absolute",
+                          backgroundColor: "#ADADAD",
+                          alignSelf: "flex-end",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                        onPress={() => {
+                          deleteFrame(i);
+                        }}
+                      >
+                        <Feather name="minus" size={24} color="black" />
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: 14,
+                          position: "absolute",
+                          backgroundColor: "#ADADAD",
+                          marginTop: 60,
+                          alignSelf: a.width == 160 ? "baseline" : "flex-end",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderColor: "black",
+                        }}
+                        onPress={() => {
+                          resizeFrame(i);
+                        }}
+                      >
+                        <AntDesign name="arrowleft" size={24} color="black" />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: 14,
+                          position: "absolute",
+                          backgroundColor: "#ADADAD",
+                          marginTop: 60,
+                          alignSelf: a.width == 160 ? "flex-end" : "baseline",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                        onPress={() => {
+                          resizeFrame(i);
+                        }}
+                      >
+                        <AntDesign name="arrowright" size={24} color="black" />
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </>
+              ))}
+
+              <TouchableOpacity onPress={addFrame}>
+                {currentFrame == 0 ? (
+                  <View
+                    style={{
+                      width: 160,
+                      height: 160,
+                      marginBottom: 17,
+                      borderRadius: 10,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderColor: "black",
+                      borderStyle: "solid",
+                      borderWidth: 1,
+                    }}
+                  >
+                    <FontAwesome name="plus" size={50} color="black" />
                   </View>
+                ) : (
+                  <View
+                    style={{
+                      width: 160,
+                      height: 160,
+                      marginBottom: 17,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderColor: "black",
+                      borderStyle: "solid",
+                      borderWidth: 1,
+                    }}
+                  >
+                    <FontAwesome name="plus" size={50} color="black" />
+                  </View>
+                )}
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+          <View
+            style={{
+              width: "100%",
+              height: 300,
+              backgroundColor: "black",
+              alignItems: "center",
+            }}
+          >
+            <View
+              style={{
+                width: "100%",
+                backgroundColor: "black",
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
+            >
+              {frameList.map((a, i) => (
+                <View
+                  style={{
+                    flex: 0.2,
+                    aspectRatio: 0.7,
+                    backgroundColor: "black",
+                    marginTop: 10,
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() => {
+                      setCurrentFrame(i);
+                    }}
+                  >
+                    <View
+                      style={{
+                        aspectRatio: 1,
+                        borderRadius: 10,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Image
+                        source={{ uri: a.img }}
+                        style={{ width: 50, height: 50 }}
+                      ></Image>
+                    </View>
+                  </TouchableOpacity>
+                  <View
+                    style={{
+                      backgroundColor: "black",
+                      alignItems: "center",
+                      marginTop: 10,
+                    }}
+                  >
+                    <Text style={{ color: "white", fontWeight: "bold" }}>
+                      {a.title}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+            <TouchableOpacity
+              style={{
+                width: "90%",
+                height: 48,
+                backgroundColor: "#124FEE",
+                marginTop: 25,
+                borderRadius: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => {
+                setCurrentMode(0);
+              }}
+            >
+              <Text
+                style={{ fontSize: 24, fontWeight: "bold", color: "white" }}
+              >
+                Complete
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      ) : currentMode === 3 ? ( //말풍선 편집 모드
+        <>
+          <ScrollView style={{ width: "100%", backgroundColor: bgColor }}>
+            <View
+              style={{
+                width: "100%",
+                backgroundColor: bgColor,
+                flexDirection: "row",
+                flexWrap: "wrap",
+                justifyContent: "space-between",
+                marginTop: 50,
+                paddingLeft: "8%",
+                paddingRight: "8%",
+              }}
+            >
+              {imageList.map((a, i) => (
+                <>
+                  {currentFrame == 0 ? (
+                    <View
+                      style={{
+                        width: a.width,
+                        height: 160,
+                        marginBottom: 17,
+                        borderRadius: 10,
+                        borderColor: "black",
+                        borderStyle: "solid",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          openBubbleEditor(i);
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderRadius: 10,
+                          }}
+                        >
+                          {a.url === "" ? (
+                            <FontAwesome
+                              name="camera"
+                              size={50}
+                              color="black"
+                            />
+                          ) : (
+                            <Image
+                              source={{ uri: a.url }}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                borderRadius: 10,
+                              }}
+                            ></Image>
+                          )}
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        width: a.width,
+                        height: 160,
+                        marginBottom: 17,
+                        borderColor: "black",
+                        borderStyle: "solid",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          openBubbleEditor(i);
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderRadius: 10,
+                          }}
+                        >
+                          {a.url === "" ? (
+                            <FontAwesome
+                              name="camera"
+                              size={50}
+                              color="black"
+                            />
+                          ) : (
+                            <Image
+                              source={{ uri: a.url }}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                              }}
+                            ></Image>
+                          )}
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  )}
                 </>
               ))}
             </View>
@@ -597,7 +865,7 @@ export default function CreateModal({
               style={{
                 width: "90%",
                 height: 48,
-                backgroundColor: "#C4C4C4",
+                backgroundColor: "#124FEE",
                 marginTop: 25,
                 borderRadius: 10,
                 justifyContent: "center",
@@ -607,7 +875,11 @@ export default function CreateModal({
                 setCurrentMode(0);
               }}
             >
-              <Text style={{ fontSize: 24, fontWeight: "bold" }}>Complete</Text>
+              <Text
+                style={{ fontSize: 24, fontWeight: "bold", color: "white" }}
+              >
+                Complete
+              </Text>
             </TouchableOpacity>
           </View>
         </>
