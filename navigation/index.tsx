@@ -30,6 +30,7 @@ import NotFoundScreen from "../screens/NotFoundScreen";
 import HomeTab from "../screens/HomeTab";
 import SearchTab from "../screens/SearchTab";
 import ProfileTab from "../screens/ProfileTab";
+import ArticleDetail from "../screens/ArticleDetail";
 import {
   RootStackParamList,
   RootTabParamList,
@@ -118,6 +119,25 @@ function RootNavigator() {
           })}
         />
       </Stack.Group>
+      <Stack.Screen
+        name="ArticleDetail"
+        component={ArticleDetail}
+        options={({ navigation }) => ({
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.pop();
+              }}
+            >
+              <Ionicons name="chevron-back" size={30} color="white" />
+            </TouchableOpacity>
+          ),
+          headerTitle: "",
+          headerStyle: {
+            backgroundColor: "black",
+          },
+        })}
+      />
     </Stack.Navigator>
   );
 }
