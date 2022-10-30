@@ -9,7 +9,9 @@ import {
   Dimensions,
   Platform,
   RefreshControl,
+  TouchableOpacity,
 } from "react-native";
+import ArticleDetail from "./ArticleDetail";
 import { useState, useEffect, ReactElement, useCallback } from "react";
 import { withSafeAreaInsets } from "react-native-safe-area-context";
 import AutoHeightImage from "react-native-auto-height-image";
@@ -31,7 +33,11 @@ export interface ImageObject {
 export default function HomeTab({ navigation }: RootTabScreenProps<"TabOne">) {
   const [feedMenu, setFeedMenu] = useState("recent");
   const [imageList, setImageList] = useState([
-    { url: "https://i.imgur.com/8N4eONn.png" },
+    {
+      content: "",
+      url: "https://i.imgur.com/8N4eONn.png",
+      user: "",
+    },
   ]);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -137,16 +143,6 @@ export default function HomeTab({ navigation }: RootTabScreenProps<"TabOne">) {
       <View style={{ marginTop: 20, backgroundColor: "black" }}>
         {feedMenu == "recent" ? (
           <View style={{ backgroundColor: "black" }}>
-            {/*
-            <FlatList
-              style={{ flex: 1, width: screenWidth }}
-              numColumns={2}
-              data={imageList}
-              renderItem={({ item }: { item: ImageObject }) => {
-                return <RenderImage url={item.url}></RenderImage>;
-              }}
-            ></FlatList>
-            */}
             <ScrollView
               style={{
                 width: 100 * vw,
@@ -171,14 +167,20 @@ export default function HomeTab({ navigation }: RootTabScreenProps<"TabOne">) {
                 }}
               >
                 {imageList.map((a) => (
-                  <AutoHeightImage
-                    source={{ uri: a.url }}
-                    width={45 * vw}
-                    style={{
-                      marginBottom: 20,
-                      borderRadius: 10,
-                    }}
-                  ></AutoHeightImage>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("ArticleDetail", { contents: a })
+                    }
+                  >
+                    <AutoHeightImage
+                      source={{ uri: a.url }}
+                      width={45 * vw}
+                      style={{
+                        marginBottom: 20,
+                        borderRadius: 10,
+                      }}
+                    ></AutoHeightImage>
+                  </TouchableOpacity>
                 ))}
               </View>
             </ScrollView>

@@ -21,6 +21,7 @@ export type RootStackParamList = {
   Signin: undefined;
   Signup: undefined;
   Create: undefined;
+  ArticleDetail: undefined;
   NotFound: undefined;
 };
 
