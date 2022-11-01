@@ -10,8 +10,8 @@ import {
 import { useState, useEffect, useRef } from "react";
 import * as RNFS from "react-native-fs";
 
-import EditScreenInfo from "../components/EditScreenInfo";
-import { Text, View } from "../components/Themed";
+import EditScreenInfo from "../../components/EditScreenInfo";
+import { Text, View } from "../../components/Themed";
 import ImagePicker from "react-native-image-crop-picker";
 import ColorPicker from "react-native-color-picker-ios";
 import PhotoEditor from "@baronha/react-native-photo-editor";
@@ -24,11 +24,11 @@ import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 
 import ViewShot from "react-native-view-shot";
-import { firebase_storage } from "../firebaseConfig";
-import { firebase_db } from "../firebaseConfig";
+import { firebase_storage } from "../../firebaseConfig";
+import { firebase_db } from "../../firebaseConfig";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { RootTabScreenProps } from "../types";
+import { RootTabScreenProps } from "../../types";
 import { async } from "@firebase/util";
 
 export default function CreateModal({
@@ -152,32 +152,32 @@ export default function CreateModal({
   /*완성된 이미지 추출*/
   const captureViewShot = async () => {
     const imageURI = await viewShotRef.current.capture();
-
-    uploadStorage(imageURI, uuidv4());
+    navigation.navigate("Create2", { imageURI: imageURI });
+    //uploadStorage(imageURI, uuidv4());
   };
 
   /*이미지 파이어베이스 스토리지에 업로드*/
-  const uploadStorage = async (uri: string, name: String) => {
-    name = "tempN_" + name + ".jpg";
-    const reference = firebase_storage.ref(`/images/COMPLETE/${name}`);
+  // const uploadStorage = async (uri: string, name: String) => {
+  //   name = "tempN_" + name + ".jpg";
+  //   const reference = firebase_storage.ref(`/images/COMPLETE/${name}`);
 
-    await reference.put(await uriToBlob(encodeURI(uri)));
+  //   await reference.put(await uriToBlob(encodeURI(uri)));
 
-    //console.log(await reference.getDownloadURL());
-    uploadDatabase(await reference.getDownloadURL());
-  };
+  //   //console.log(await reference.getDownloadURL());
+  //   uploadDatabase(await reference.getDownloadURL());
+  // };
 
-  /*이미지 파이어베이스 리얼타임 데이터베이스에 업로드*/
-  const uploadDatabase = async (imgURL: string) => {
-    firebase_db
-      .ref("/images")
-      .once("value")
-      .then(async (snapshot) => {
-        const reference = firebase_db.ref(`/images/${snapshot.val().length}`);
-        await reference.update({ url: imgURL });
-        navigation.goBack();
-      });
-  };
+  // /*이미지 파이어베이스 리얼타임 데이터베이스에 업로드*/
+  // const uploadDatabase = async (imgURL: string) => {
+  //   firebase_db
+  //     .ref("/images")
+  //     .once("value")
+  //     .then(async (snapshot) => {
+  //       const reference = firebase_db.ref(`/images/${snapshot.val().length}`);
+  //       await reference.update({ url: imgURL });
+  //       navigation.goBack();
+  //     });
+  // };
 
   const uriToBlob = async (uri: string) => {
     const response = await fetch(uri);
