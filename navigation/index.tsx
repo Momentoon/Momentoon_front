@@ -25,7 +25,8 @@ import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import Signin from "../screens/SignInUp/Signin";
 import Signup from "../screens/SignInUp/Signup";
-import CreateModal from "../screens/CreateModal";
+import CreateModal from "../screens/Create/CreateModal";
+import CreateModal2 from "../screens/Create/CreateModal2";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import HomeTab from "../screens/HomeTab";
 import SearchTab from "../screens/SearchTab";
@@ -118,7 +119,40 @@ function RootNavigator() {
             },
           })}
         />
+        <Stack.Screen
+          name="Create2"
+          component={CreateModal2}
+          options={({ route, navigation }) => ({
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.pop();
+                }}
+              >
+                <Ionicons name="chevron-back" size={30} color="white" />
+              </TouchableOpacity>
+            ),
+            headerRight: () => (
+              <Pressable
+                onPress={() => route.params.test()}
+                style={({ pressed }) => ({
+                  opacity: pressed ? 0.5 : 1,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                })}
+              >
+                <Text style={styles.createBtn}>Upload</Text>
+              </Pressable>
+            ),
+            headerTitle: "",
+            headerStyle: {
+              backgroundColor: "black",
+            },
+          })}
+        />
       </Stack.Group>
+
       <Stack.Screen
         name="ArticleDetail"
         component={ArticleDetail}
