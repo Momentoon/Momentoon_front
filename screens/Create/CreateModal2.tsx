@@ -9,12 +9,14 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
+import { useSelector } from "react-redux";
 
 var { vw, vh, vmin, vmax } = require("react-native-viewport-units");
 
 export default function CreateModal2({ route, navigation }) {
   const [content, setContent] = useState("");
   const [postNum, setPostNum] = useState(0);
+  const reduxState: any = useSelector((state) => state);
 
   const uploadBtnTapped = async () => {
     //console.log("test");
@@ -43,7 +45,7 @@ export default function CreateModal2({ route, navigation }) {
         await reference.update({
           url: imgURL,
           content: content,
-          user: "woals99@gmail.com",
+          user: reduxState.currentUser,
         });
         navigation.pop(2);
       });
