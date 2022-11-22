@@ -134,7 +134,7 @@ function RootNavigator() {
             ),
             headerRight: () => (
               <Pressable
-                onPress={() => route.params.test()}
+                onPress={() => route.params.uploadBtnTapped()}
                 style={({ pressed }) => ({
                   opacity: pressed ? 0.5 : 1,
                   flexDirection: "row",
