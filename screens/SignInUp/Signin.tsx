@@ -2,14 +2,20 @@ import React, { useState } from "react";
 import { Text, View } from "../../components/Themed";
 import { StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { signin } from "../../firebaseConfig";
+import { useDispatch } from "react-redux";
 
 function Signin({ navigation }) {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [PW, setPW] = useState("");
 
   const signinEvent = async () => {
     try {
       await signin(email, PW);
+      dispatch({
+        type: "change",
+        payload: { changeData: email, variableType: "currentUser" },
+      });
       navigation.navigate("Root");
     } catch (error) {
       alert(error);

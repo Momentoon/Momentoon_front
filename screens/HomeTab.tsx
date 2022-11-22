@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import ArticleDetail from "./ArticleDetail";
 import { useState, useEffect, ReactElement, useCallback } from "react";
+import { useSelector } from "react-redux";
 import { withSafeAreaInsets } from "react-native-safe-area-context";
 import AutoHeightImage from "react-native-auto-height-image";
 import MasonryList from "@react-native-seoul/masonry-list";
@@ -45,6 +46,8 @@ export default function HomeTab({ navigation }: RootTabScreenProps<"TabOne">) {
   const dimensions = Dimensions.get("window");
   const screenWidth = dimensions.width;
 
+  const reduxState: any = useSelector((state) => state);
+
   useEffect(() => {
     firebase_db
       .ref("/images")
@@ -54,6 +57,8 @@ export default function HomeTab({ navigation }: RootTabScreenProps<"TabOne">) {
         //console.log(snapshot.val());
         setImageList(snapshot.val());
       });
+
+    console.log(reduxState.currentUser);
   }, []);
 
   const RenderImage = (props: ImageObject) => {

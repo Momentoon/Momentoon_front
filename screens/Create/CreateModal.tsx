@@ -94,7 +94,7 @@ export default function CreateModal({
         await reference.put(await uriToBlob(encodeURI(a.url)));
 
         const getRef = await firebase_storage.ref(
-          `/images/FILTERED/FCBackup${name}`
+          `/images/FILTERED/FCResult${name}`
         );
         while (1) {
           try {
