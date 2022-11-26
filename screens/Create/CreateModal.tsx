@@ -69,6 +69,19 @@ export default function CreateModal({
     { title: "edge", img: "https://i.imgur.com/ciqfP0h.png" },
   ]);
 
+  const [filterList, setFilterList] = useState([
+    { title: "Sample", img: "https://i.imgur.com/vNDL3Yf.png" },
+    { title: "Miyazaki Hayao", img: "https://i.imgur.com/p6ATCrH.jpg" },
+    { title: "Shinkai Makoto", img: "https://i.imgur.com/tiCetNQ.jpg" },
+  ]);
+
+  const [originalImageList, setOriginalImageList] = useState([
+    { url: "", width: 160 },
+    { url: "", width: 160 },
+    { url: "", width: 160 },
+    { url: "", width: 160 },
+  ]);
+
   const [imageList, setImageList] = useState([
     { url: "", width: 160 },
     { url: "", width: 160 },
@@ -82,13 +95,20 @@ export default function CreateModal({
   ];
 
   /*필터링 적용 함수*/
-  const filtering = async () => {
-    imageList.map(async (a, i) => {
+  const filtering = async (filterIdx: Number) => {
+    originalImageList.map(async (a, i) => {
       //console.log(a.url);
 
       if (a.url != "") {
         var name = uuidv4();
-        name = "tempN_" + name + ".jpg";
+
+        if (filterIdx == 0) {
+          name = "tempN_" + name + ".jpg";
+        } else {
+          name = `temp${filterIdx}_${name}.jpg`;
+        }
+
+        console.log(name);
 
         const reference = firebase_storage.ref(`/images/UPLOAD/${name}`);
         await reference.put(await uriToBlob(encodeURI(a.url)));
@@ -122,6 +142,7 @@ export default function CreateModal({
     }).then((image) => {
       var temp = [...imageList];
       temp[i].url = image.path;
+      setOriginalImageList(temp);
       setImageList(temp);
     });
   };
@@ -130,6 +151,7 @@ export default function CreateModal({
   const addFrame = () => {
     var temp = [...imageList];
     temp.push({ url: "", width: 160 });
+    setOriginalImageList(temp);
     setImageList(temp);
   };
 
@@ -137,6 +159,7 @@ export default function CreateModal({
   const deleteFrame = (i: number) => {
     var temp = [...imageList];
     temp.splice(i, 1);
+    setOriginalImageList(temp);
     setImageList(temp);
   };
 
@@ -146,6 +169,7 @@ export default function CreateModal({
 
     temp[i].width == 160 ? (temp[i].width = 350) : (temp[i].width = 160);
 
+    setOriginalImageList(temp);
     setImageList(temp);
   };
 
@@ -155,29 +179,6 @@ export default function CreateModal({
     navigation.navigate("Create2", { imageURI: imageURI });
     //uploadStorage(imageURI, uuidv4());
   };
-
-  /*이미지 파이어베이스 스토리지에 업로드*/
-  // const uploadStorage = async (uri: string, name: String) => {
-  //   name = "tempN_" + name + ".jpg";
-  //   const reference = firebase_storage.ref(`/images/COMPLETE/${name}`);
-
-  //   await reference.put(await uriToBlob(encodeURI(uri)));
-
-  //   //console.log(await reference.getDownloadURL());
-  //   uploadDatabase(await reference.getDownloadURL());
-  // };
-
-  // /*이미지 파이어베이스 리얼타임 데이터베이스에 업로드*/
-  // const uploadDatabase = async (imgURL: string) => {
-  //   firebase_db
-  //     .ref("/images")
-  //     .once("value")
-  //     .then(async (snapshot) => {
-  //       const reference = firebase_db.ref(`/images/${snapshot.val().length}`);
-  //       await reference.update({ url: imgURL });
-  //       navigation.goBack();
-  //     });
-  // };
 
   const uriToBlob = async (uri: string) => {
     const response = await fetch(uri);
@@ -376,11 +377,7 @@ export default function CreateModal({
                 >
                   <TouchableOpacity
                     onPress={() => {
-                      if (i == 1) {
-                        filtering();
-                      } else {
-                        setCurrentMode(i + 1);
-                      }
+                      setCurrentMode(i + 1);
                     }}
                   >
                     <View
@@ -861,6 +858,186 @@ export default function CreateModal({
               alignItems: "center",
             }}
           >
+            <TouchableOpacity
+              style={{
+                width: "90%",
+                height: 48,
+                backgroundColor: "#124FEE",
+                marginTop: 25,
+                borderRadius: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => {
+                setCurrentMode(0);
+              }}
+            >
+              <Text
+                style={{ fontSize: 24, fontWeight: "bold", color: "white" }}
+              >
+                Complete
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      ) : currentMode === 2 ? ( //필터선택모드
+        <>
+          <ScrollView style={{ width: "100%", backgroundColor: bgColor }}>
+            <View
+              style={{
+                width: "100%",
+                backgroundColor: bgColor,
+                flexDirection: "row",
+                flexWrap: "wrap",
+                justifyContent: "space-between",
+                marginTop: 50,
+                paddingLeft: "8%",
+                paddingRight: "8%",
+              }}
+            >
+              {imageList.map((a, i) => (
+                <>
+                  {currentFrame == 0 ? (
+                    <View
+                      style={{
+                        width: a.width,
+                        height: 160,
+                        marginBottom: 17,
+                        borderRadius: 10,
+                        borderColor: "black",
+                        borderStyle: "solid",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          borderRadius: 10,
+                        }}
+                      >
+                        {a.url === "" ? (
+                          <FontAwesome name="camera" size={50} color="black" />
+                        ) : (
+                          <Image
+                            source={{ uri: a.url }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderRadius: 10,
+                            }}
+                          ></Image>
+                        )}
+                      </View>
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        width: a.width,
+                        height: 160,
+                        marginBottom: 17,
+                        borderColor: "black",
+                        borderStyle: "solid",
+                        borderWidth: 1,
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          borderRadius: 10,
+                        }}
+                      >
+                        {a.url === "" ? (
+                          <FontAwesome name="camera" size={50} color="black" />
+                        ) : (
+                          <Image
+                            source={{ uri: a.url }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                            }}
+                          ></Image>
+                        )}
+                      </View>
+                    </View>
+                  )}
+                </>
+              ))}
+            </View>
+          </ScrollView>
+          <View
+            style={{
+              width: "100%",
+              height: 300,
+              backgroundColor: "black",
+              alignItems: "center",
+            }}
+          >
+            <View
+              style={{
+                width: "100%",
+                backgroundColor: "black",
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
+            >
+              {filterList.map((a, i) => (
+                <View
+                  style={{
+                    flex: 0.2,
+                    aspectRatio: 0.7,
+                    backgroundColor: "black",
+                    marginTop: 10,
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() => {
+                      filtering(i);
+                    }}
+                  >
+                    <View
+                      style={{
+                        aspectRatio: 1,
+                        borderRadius: 10,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Image
+                        source={{ uri: a.img }}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          borderRadius: 10,
+                        }}
+                      ></Image>
+                    </View>
+                  </TouchableOpacity>
+                  <View
+                    style={{
+                      backgroundColor: "black",
+                      alignItems: "center",
+                      marginTop: 10,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "white",
+                        fontWeight: "bold",
+                        textAlign: "center",
+                      }}
+                    >
+                      {a.title}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </View>
             <TouchableOpacity
               style={{
                 width: "90%",
