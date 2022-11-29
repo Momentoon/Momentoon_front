@@ -116,6 +116,7 @@ export default function CreateModal({
         const getRef = await firebase_storage.ref(
           `/images/FILTERED/FCResult${name}`
         );
+        /*
         while (1) {
           try {
             var test = await getRef.getDownloadURL();
@@ -126,7 +127,7 @@ export default function CreateModal({
           } catch (err) {
             console.log(err);
           }
-        }
+        }*/
       }
     });
   };
@@ -142,8 +143,11 @@ export default function CreateModal({
     }).then((image) => {
       var temp = [...imageList];
       temp[i].url = image.path;
-      setOriginalImageList(temp);
       setImageList(temp);
+
+      var temp2 = [...originalImageList];
+      temp2[i].url = image.path;
+      setOriginalImageList(temp2);
     });
   };
 
@@ -151,26 +155,33 @@ export default function CreateModal({
   const addFrame = () => {
     var temp = [...imageList];
     temp.push({ url: "", width: 160 });
-    setOriginalImageList(temp);
     setImageList(temp);
+
+    var temp2 = [...originalImageList];
+    temp2.push({ url: "", width: 160 });
+    setOriginalImageList(temp2);
   };
 
   /*프레임 삭제*/
   const deleteFrame = (i: number) => {
     var temp = [...imageList];
     temp.splice(i, 1);
-    setOriginalImageList(temp);
     setImageList(temp);
+
+    var temp2 = [...originalImageList];
+    temp2.splice(i, 1);
+    setOriginalImageList(temp2);
   };
 
   /*프레임 사이즈 조절*/
   const resizeFrame = (i: number) => {
     var temp = [...imageList];
-
     temp[i].width == 160 ? (temp[i].width = 350) : (temp[i].width = 160);
-
-    setOriginalImageList(temp);
     setImageList(temp);
+
+    var temp2 = [...originalImageList];
+    temp2[i].width == 160 ? (temp2[i].width = 350) : (temp2[i].width = 160);
+    setOriginalImageList(temp2);
   };
 
   /*완성된 이미지 추출*/
