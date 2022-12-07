@@ -73,6 +73,8 @@ export default function CreateModal({
     { title: "Sample", img: "https://i.imgur.com/vNDL3Yf.png" },
     { title: "Miyazaki Hayao", img: "https://i.imgur.com/p6ATCrH.jpg" },
     { title: "Shinkai Makoto", img: "https://i.imgur.com/tiCetNQ.jpg" },
+    { title: "Wind Breaker A", img: "https://i.imgur.com/3VwVSjp.png" },
+    { title: "Wind Breaker B", img: "https://i.imgur.com/7Eq2HC0.jpg" },
   ]);
 
   const [originalImageList, setOriginalImageList] = useState([
@@ -989,72 +991,75 @@ export default function CreateModal({
               alignItems: "center",
             }}
           >
-            <View
-              style={{
-                width: "100%",
-                backgroundColor: "black",
-                flexDirection: "row",
-                justifyContent: "space-around",
-              }}
-            >
-              {filterList.map((a, i) => (
-                <View
-                  style={{
-                    flex: 0.2,
-                    aspectRatio: 0.7,
-                    backgroundColor: "black",
-                    marginTop: 10,
-                  }}
-                >
-                  <TouchableOpacity
-                    onPress={() => {
-                      filtering(i);
-                    }}
-                  >
-                    <View
-                      style={{
-                        aspectRatio: 1,
-                        borderRadius: 10,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Image
-                        source={{ uri: a.img }}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          borderRadius: 10,
-                        }}
-                      ></Image>
-                    </View>
-                  </TouchableOpacity>
+            <ScrollView horizontal={true}>
+              <View
+                style={{
+                  width: "100%",
+                  backgroundColor: "black",
+                  flexDirection: "row",
+                  justifyContent: "space-around",
+                }}
+              >
+                {filterList.map((a, i) => (
                   <View
                     style={{
+                      flex: 0.2,
+                      aspectRatio: 0.7,
                       backgroundColor: "black",
-                      alignItems: "center",
                       marginTop: 10,
+                      marginLeft: 10,
                     }}
                   >
-                    <Text
-                      style={{
-                        color: "white",
-                        fontWeight: "bold",
-                        textAlign: "center",
+                    <TouchableOpacity
+                      onPress={() => {
+                        filtering(i);
                       }}
                     >
-                      {a.title}
-                    </Text>
+                      <View
+                        style={{
+                          aspectRatio: 1,
+                          borderRadius: 10,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Image
+                          source={{ uri: a.img }}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: 10,
+                          }}
+                        ></Image>
+                      </View>
+                    </TouchableOpacity>
+                    <View
+                      style={{
+                        backgroundColor: "black",
+                        alignItems: "center",
+                        marginTop: 10,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "white",
+                          fontWeight: "bold",
+                          textAlign: "center",
+                        }}
+                      >
+                        {a.title}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              ))}
-            </View>
+                ))}
+              </View>
+            </ScrollView>
             <TouchableOpacity
               style={{
                 width: "90%",
                 height: 48,
                 backgroundColor: "#124FEE",
-                marginTop: 25,
+                marginBottom: 100,
                 borderRadius: 10,
                 justifyContent: "center",
                 alignItems: "center",

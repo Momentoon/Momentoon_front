@@ -3,11 +3,6 @@ import {
   Image,
   Pressable,
   ScrollView,
-  FlatList,
-  ListRenderItem,
-  Dimensions,
-  Platform,
-  RefreshControl,
   TouchableOpacity,
 } from "react-native";
 import { useState } from "react";
