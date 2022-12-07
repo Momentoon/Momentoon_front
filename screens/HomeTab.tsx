@@ -4,8 +4,6 @@ import {
   Image,
   Pressable,
   ScrollView,
-  FlatList,
-  ListRenderItem,
   Dimensions,
   Platform,
   RefreshControl,
