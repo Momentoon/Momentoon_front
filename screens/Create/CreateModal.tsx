@@ -118,7 +118,7 @@ export default function CreateModal({
         const getRef = await firebase_storage.ref(
           `/images/FILTERED/FCResult${name}`
         );
-        /*
+
         while (1) {
           try {
             var test = await getRef.getDownloadURL();
@@ -129,7 +129,7 @@ export default function CreateModal({
           } catch (err) {
             console.log(err);
           }
-        }*/
+        }
       }
     });
   };
