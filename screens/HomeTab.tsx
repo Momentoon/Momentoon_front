@@ -9,14 +9,10 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from "react-native";
-import ArticleDetail from "./ArticleDetail";
 import { useState, useEffect, ReactElement, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { withSafeAreaInsets } from "react-native-safe-area-context";
 import AutoHeightImage from "react-native-auto-height-image";
-import MasonryList from "@react-native-seoul/masonry-list";
 
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 import { RootTabScreenProps } from "../types";
 

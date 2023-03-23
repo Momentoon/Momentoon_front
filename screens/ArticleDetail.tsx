@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { Text, View } from "../components/Themed";
 import { StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import AutoHeightImage from "react-native-auto-height-image";
@@ -6,7 +7,15 @@ import { AntDesign } from "@expo/vector-icons";
 
 var { vw, vh, vmin, vmax } = require("react-native-viewport-units");
 
-export default function ArticleDetail({ route, navigation }) {
+export default function ArticleDetail({
+  route,
+  navigation,
+}: {
+  route: any;
+  navigation: any;
+}) {
+  const reduxState: any = useSelector((state) => state);
+
   return (
     <View
       style={{
@@ -24,7 +33,16 @@ export default function ArticleDetail({ route, navigation }) {
               alignItems: "center",
             }}
           >
-            <View style={styles.profileImg}></View>
+            <TouchableOpacity
+              onPress={() => {
+                if (route.params.contents.user != reduxState.currentUser)
+                  navigation.navigate("OtherUser", {
+                    userName: route.params.contents.user,
+                  });
+              }}
+            >
+              <View style={styles.profileImg}></View>
+            </TouchableOpacity>
             <Text style={styles.userName}>{route.params.contents.user}</Text>
           </View>
           <AntDesign name="adduser" size={25} color="white" style={{}} />

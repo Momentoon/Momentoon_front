@@ -32,6 +32,7 @@ import HomeTab from "../screens/HomeTab";
 import SearchTab from "../screens/SearchTab";
 import ProfileTab from "../screens/ProfileTab";
 import ArticleDetail from "../screens/ArticleDetail";
+import OtherUser from "../screens/OtherUser/OtherUser";
 import {
   RootStackParamList,
   RootTabParamList,
@@ -156,6 +157,26 @@ function RootNavigator() {
       <Stack.Screen
         name="ArticleDetail"
         component={ArticleDetail}
+        options={({ navigation }) => ({
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.pop();
+              }}
+            >
+              <Ionicons name="chevron-back" size={30} color="white" />
+            </TouchableOpacity>
+          ),
+          headerTitle: "",
+          headerStyle: {
+            backgroundColor: "black",
+          },
+        })}
+      />
+
+      <Stack.Screen
+        name="OtherUser"
+        component={OtherUser}
         options={({ navigation }) => ({
           headerLeft: () => (
             <TouchableOpacity

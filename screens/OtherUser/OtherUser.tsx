@@ -6,20 +6,24 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from "react-native";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import AutoHeightImage from "react-native-auto-height-image";
-import { RootTabScreenProps } from "../types";
-import { Text, View } from "../components/Themed";
-import { firebase_db } from "../firebaseConfig";
+import { RootTabScreenProps } from "../../types";
+import { Text, View } from "../../components/Themed";
+import { firebase_db } from "../../firebaseConfig";
 import { useSelector } from "react-redux";
 
-import FoucesdIcon from "../assets/images/common/ic_focused.png";
+import FoucesdIcon from "../../assets/images/common/ic_focused.png";
 
 var { vw, vh, vmin, vmax } = require("react-native-viewport-units");
 
-export default function ProfileTab({
+export default function OtherUser({
+  route,
   navigation,
-}: RootTabScreenProps<"ProfileTab">) {
+}: {
+  route: any;
+  navigation: any;
+}) {
   const reduxState: any = useSelector((state) => state);
   const [imageList, setImageList] = useState([
     {
@@ -35,21 +39,16 @@ export default function ProfileTab({
     { name: "Following", number: 0 },
   ]);
 
-  const [refreshing, setRefreshing] = useState(false);
-
-  //const [feedMenu, setFeedMenu] = useState("moments");
-
   useEffect(() => {
     firebase_db
       .ref("/images")
       .orderByChild("user")
-      .equalTo(reduxState.currentUser)
+      .equalTo(route.params.userName)
       .once("value")
       .then((snapshot) => {
         if (snapshot.val() != null) {
           console.log(snapshot.val());
-          console.log(typeof snapshot.val());
-          setImageList(snapshot.val());
+          setImageList(Object.values(snapshot.val()));
         }
       });
   }, []);
@@ -60,44 +59,24 @@ export default function ProfileTab({
     setIndicator(temp);
   }, [imageList]);
 
-  const wait = (timeout: any) => {
-    return new Promise((resolve) => setTimeout(resolve, timeout));
-  };
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    firebase_db
-      .ref("/images")
-      .orderByChild("user")
-      .equalTo(reduxState.currentUser)
-      .once("value")
-      .then((snapshot) => {
-        if (snapshot.val() != null) {
-          console.log(snapshot.val());
-          setImageList(Object.values(snapshot.val()));
-        }
-      });
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-
   return (
     <View style={styles.container}>
       <View
-        style={{ backgroundColor: "black", width: "100%", paddingBottom: 10 }}
+        style={{ backgroundColor: "black", width: "100%", paddingBottom: 0 }}
       >
         <View
           style={{
             backgroundColor: "black",
-            height: 180,
+            height: 160,
             width: "100%",
-            paddingTop: 40,
+            paddingTop: 20,
             flexDirection: "row",
             justifyContent: "center",
           }}
         >
           <View style={styles.profileImg}></View>
           <View style={{ backgroundColor: "black", alignItems: "center" }}>
-            <Text style={styles.userName}>{reduxState.currentUser}</Text>
+            <Text style={styles.userName}>{route.params.userName}</Text>
             <View style={{ flexDirection: "row", backgroundColor: "black" }}>
               {indicator.map((a) => (
                 <View style={styles.indicatorContainer}>
@@ -115,49 +94,7 @@ export default function ProfileTab({
             width: "100%",
             justifyContent: "space-around",
           }}
-        >
-          {/*
-          <Pressable
-            onPress={() => {
-              setFeedMenu("moments");
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: "black",
-                alignItems: "center",
-                marginLeft: 18,
-              }}
-            >
-              <Text style={styles.menuText}>Moments</Text>
-              <Image
-                source={FoucesdIcon}
-                style={
-                  feedMenu == "moments"
-                    ? styles.focusedIcon
-                    : { display: "none" }
-                }
-              ></Image>
-            </View>
-          </Pressable>
-
-          <Pressable
-            onPress={() => {
-              setFeedMenu("likes");
-            }}
-          >
-            <View style={{ backgroundColor: "black", alignItems: "center" }}>
-              <Text style={styles.menuText}>Likes</Text>
-              <Image
-                source={FoucesdIcon}
-                style={
-                  feedMenu == "likes" ? styles.focusedIcon : { display: "none" }
-                }
-              ></Image>
-            </View>
-          </Pressable>
-          */}
-        </View>
+        ></View>
       </View>
       <View style={{ backgroundColor: "black" }}>
         <ScrollView
@@ -165,13 +102,6 @@ export default function ProfileTab({
             width: 100 * vw,
             marginBottom: 200,
           }}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor="white"
-            />
-          }
         >
           <View
             style={{
@@ -185,9 +115,9 @@ export default function ProfileTab({
           >
             {imageList.map((a) => (
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("ArticleDetail", { contents: a })
-                }
+                onPress={() => {
+                  navigation.push("ArticleDetail", { contents: a });
+                }}
               >
                 <AutoHeightImage
                   source={{ uri: a.url }}

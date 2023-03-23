@@ -23,6 +23,7 @@ export type RootStackParamList = {
   Create: undefined;
   Create2: undefined;
   ArticleDetail: undefined;
+  OtherUser: undefined;
   NotFound: undefined;
 };
 
