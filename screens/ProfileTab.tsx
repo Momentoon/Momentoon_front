@@ -48,8 +48,8 @@ export default function ProfileTab({
       .then((snapshot) => {
         if (snapshot.val() != null) {
           console.log(snapshot.val());
-          console.log(typeof snapshot.val());
-          setImageList(snapshot.val());
+          //console.log(typeof snapshot.val());
+          setImageList(Object.values(snapshot.val()));
         }
       });
   }, []);

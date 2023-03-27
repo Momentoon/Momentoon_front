@@ -62,12 +62,18 @@ export default function OtherUser({
   return (
     <View style={styles.container}>
       <View
-        style={{ backgroundColor: "black", width: "100%", paddingBottom: 0 }}
+        style={{
+          backgroundColor: "black",
+          width: "100%",
+          paddingBottom: 20,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
         <View
           style={{
             backgroundColor: "black",
-            height: 160,
+            height: 140,
             width: "100%",
             paddingTop: 20,
             flexDirection: "row",
@@ -95,6 +101,11 @@ export default function OtherUser({
             justifyContent: "space-around",
           }}
         ></View>
+        <TouchableOpacity style={{ width: "90%" }}>
+          <View style={styles.followBtn}>
+            <Text style={styles.followText}>Follow</Text>
+          </View>
+        </TouchableOpacity>
       </View>
       <View style={{ backgroundColor: "black" }}>
         <ScrollView
@@ -187,5 +198,18 @@ const styles = StyleSheet.create({
     marginTop: 5,
     width: 8,
     height: 8,
+  },
+  followBtn: {
+    height: 45,
+    borderRadius: 10,
+    width: "100%",
+    backgroundColor: "#124FEE",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  followText: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "700",
   },
 });
