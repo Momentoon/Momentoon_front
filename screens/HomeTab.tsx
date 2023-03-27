@@ -35,12 +35,53 @@ export default function HomeTab({ navigation }: RootTabScreenProps<"TabOne">) {
     },
   ]);
 
+  const [followingList, setFollowingList] = useState([""]);
+
+  const [followImageList, setFollowImageList] = useState([
+    {
+      content: "",
+      url: "",
+      user: "",
+    },
+  ]);
+
   const [refreshing, setRefreshing] = useState(false);
 
   const dimensions = Dimensions.get("window");
   const screenWidth = dimensions.width;
 
   const reduxState: any = useSelector((state) => state);
+
+  useEffect(() => {
+    firebase_db
+      .ref("/users")
+      .orderByChild("email")
+      .equalTo(reduxState.currentUser)
+      .once("value")
+      .then((snapshot) => {
+        var data = Object.values(snapshot.val())[0];
+        setFollowingList(data.following);
+        //console.log(followingList);
+      });
+
+    firebase_db
+      .ref("/images")
+      .once("value")
+      .then((snapshot) => {
+        //console.log("모드 변경");
+        var temp = snapshot.val();
+        var temp2 = [];
+        console.log(temp);
+        temp.map((a, i) => {
+          if (followingList.includes(a.user)) {
+            temp2.push(a);
+          }
+        });
+        setFollowImageList(temp2);
+      });
+
+    console.log(reduxState.currentUser);
+  }, [feedMenu]);
 
   useEffect(() => {
     firebase_db
@@ -186,7 +227,47 @@ export default function HomeTab({ navigation }: RootTabScreenProps<"TabOne">) {
           </View>
         ) : (
           <View style={{ backgroundColor: "black" }}>
-            <Text style={{ color: "white" }}>팔로우만 보기</Text>
+            <ScrollView
+              style={{
+                width: 100 * vw,
+                marginBottom: 50,
+              }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  tintColor="white"
+                />
+              }
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  backgroundColor: "black",
+                  paddingLeft: 18,
+                  paddingRight: 18,
+                }}
+              >
+                {followImageList.map((a) => (
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("ArticleDetail", { contents: a })
+                    }
+                  >
+                    <AutoHeightImage
+                      source={{ uri: a.url }}
+                      width={45 * vw}
+                      style={{
+                        marginBottom: 20,
+                        borderRadius: 10,
+                      }}
+                    ></AutoHeightImage>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
           </View>
         )}
       </View>
