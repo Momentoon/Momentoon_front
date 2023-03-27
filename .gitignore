@@ -73,3 +73,6 @@ web-build/
 dist/
 
 # @end expo-cli
+
+#파이어베이스 설정 파일
+firebaseConfig.ts
