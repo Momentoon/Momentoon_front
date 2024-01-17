@@ -10,8 +10,10 @@ https://github.com/Momentoon/Momentoon/wiki
 Xcode 14.2 <br/>
 iOS 15.0
 
+<b>build command</b> <br/>
 npm install --legacy-peer-deps <br/>
 cd ios && pod install && cd ..
 npx react-native run-ios
 
-'firebaseConfig.ts' file is required for normal operation. (gitignored)
+<b>note</b> <br/>
+'firebaseConfig.ts' file is required for normal operation. (git ignored)
